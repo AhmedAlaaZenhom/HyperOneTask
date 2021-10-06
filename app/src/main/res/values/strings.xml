@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">HyperOneTask</string>
-    <string name="loading">Loading...</string>
+
+    <string name="loading">Loading…</string>
+    <string name="connection_error">Connection Error</string>
+    <string name="internet_try_again">Please check your internet connection and try again</string>
+    <string name="try_again">Try Again</string>
     <string name="click_twice">Please click again to exit</string>
+
+    <string name="search_for_files">Search for files</string>
+    <string name="files_list">Files List</string>
 </resources>
