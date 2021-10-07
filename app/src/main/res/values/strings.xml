@@ -9,4 +9,8 @@
 
     <string name="search_for_files">Search for files</string>
     <string name="files_list">Files List</string>
+    <string name="downloading">Downloading...</string>
+    <string name="pending_download">Pending Download</string>
+    <string name="online">Online</string>
+    <string name="downloaded">Downloaded</string>
 </resources>

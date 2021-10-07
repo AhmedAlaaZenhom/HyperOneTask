@@ -1,6 +1,7 @@
 package com.example.hyperonetask.ui.files_list
 
 import androidx.activity.viewModels
+import androidx.core.widget.addTextChangedListener
 import com.example.hyperonetask.base.BaseActivity
 import com.example.hyperonetask.databinding.ActivityFilesListBinding
 import com.example.hyperonetask.utils.State
@@ -15,6 +16,7 @@ class FilesListActivity : BaseActivity<ActivityFilesListBinding, FilesListViewMo
     override val viewModel: FilesListViewModel by viewModels()
     override val binding by viewBinding(ActivityFilesListBinding::inflate)
 
+    private lateinit var adapter: FilesAdapter
 
     override fun onActivityCreated() {
         initViews()
@@ -22,7 +24,14 @@ class FilesListActivity : BaseActivity<ActivityFilesListBinding, FilesListViewMo
     }
 
     private fun initViews() {
+        // RecyclerView
+        adapter = FilesAdapter { }
+        binding.rvFiles.adapter = adapter
 
+        // SearchBar
+        binding.inputSearchFiles.addTextChangedListener {
+            adapter.filter(it.toString())
+        }
     }
 
     private fun initObservers() {
@@ -30,6 +39,7 @@ class FilesListActivity : BaseActivity<ActivityFilesListBinding, FilesListViewMo
             when (it) {
                 is State.Loading -> binding.stateView.showLoading()
                 is State.Success -> {
+                    adapter.modifyList(it.data)
                     binding.stateView.showContent()
                 }
                 is State.Error -> binding.stateView.showError { viewModel.getListOfFiles() }

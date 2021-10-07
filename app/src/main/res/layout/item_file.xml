@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingEnd="12dp"
+    android:paddingBottom="6dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    tools:ignore="RtlSymmetry">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:animateLayoutChanges="true">
+
+            <ImageView
+                android:id="@+id/iv_status_types"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="10dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                app:srcCompat="@drawable/ic_online"
+                android:visibility="visible"/>
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/gp_downloading_views"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:constraint_referenced_ids="iv_status_downloading,tv_download_percentage,tv_download_speed" />
+
+            <ImageView
+                android:id="@+id/iv_status_downloading"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/iv_status_types"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                app:srcCompat="@drawable/ic_downloading"/>
+
+            <TextView
+                android:id="@+id/tv_download_percentage"
+                app:layout_constraintTop_toBottomOf="@id/iv_status_downloading"
+                app:layout_constraintBottom_toTopOf="@id/tv_status"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/iv_status_downloading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                tools:text="54%"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_download_speed"
+                app:layout_constraintTop_toBottomOf="@id/iv_status_downloading"
+                app:layout_constraintBottom_toTopOf="@id/tv_status"
+                app:layout_constraintStart_toEndOf="@id/iv_status_downloading"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="1.7 MB/s"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_status"
+                app:layout_constraintTop_toBottomOf="@id/iv_status_types"
+                android:layout_marginTop="4dp"
+                android:paddingBottom="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="@string/online"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:ellipsize="end"
+                android:maxLines="1"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:ellipsize="end"
+        tools:text="FileName.ext"
+        android:textColor="@color/grey_dark2"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:maxLines="1"/>
+</LinearLayout>
