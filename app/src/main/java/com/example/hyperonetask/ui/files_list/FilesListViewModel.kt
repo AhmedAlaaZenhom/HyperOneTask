@@ -1,5 +1,6 @@
 package com.example.hyperonetask.ui.files_list
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -51,8 +52,8 @@ class FilesListViewModel @Inject constructor(
 
         downloadFileIdMap[downloadRequest.id] = fileModel.id!!
 
-        fetch.enqueue(downloadRequest){
-            if(it.throwable?.message.isNullOrEmpty())
+        fetch.enqueue(downloadRequest) {
+            if (it.throwable?.message.isNullOrEmpty())
                 showErrorMsg(R.string.something_went_wrong)
             else
                 showErrorMsg(it.throwable!!.message!!)
@@ -65,11 +66,11 @@ class FilesListViewModel @Inject constructor(
     fun cancelDownload(fileModel: FileModel) {
         var requestId = 0
         downloadFileIdMap.filter { it.value == fileModel.id }.keys.let {
-            if(it.isNotEmpty())
+            if (it.isNotEmpty())
                 requestId = it.first()
         }
-        fetch.cancel(requestId){
-            if(it.throwable?.message.isNullOrEmpty())
+        fetch.cancel(requestId) {
+            if (it.throwable?.message.isNullOrEmpty())
                 showErrorMsg(R.string.something_went_wrong)
             else
                 showErrorMsg(it.throwable!!.message!!)
@@ -84,7 +85,13 @@ class FilesListViewModel @Inject constructor(
 
         override fun onCancelled(download: Download) {
             _fileDownloadStatusLiveData.value =
-                FileModel(id = downloadFileIdMap[download.id], status = FileStatus.ONLINE)
+                FileModel(
+                    id = downloadFileIdMap[download.id],
+                    status = FileStatus.ONLINE,
+                    downloadProgress = 0,
+                    downloadedBytesPerSecond = 0
+                )
+            showErrorMsg(R.string.download_cancelled)
         }
 
         override fun onCompleted(download: Download) {
@@ -103,7 +110,7 @@ class FilesListViewModel @Inject constructor(
         }
 
         override fun onError(download: Download, error: Error, throwable: Throwable?) {
-            if(error.throwable?.message.isNullOrEmpty())
+            if (error.throwable?.message.isNullOrEmpty())
                 showErrorMsg(R.string.something_went_wrong)
             else
                 showErrorMsg(error.throwable!!.message!!)
@@ -119,6 +126,15 @@ class FilesListViewModel @Inject constructor(
             etaInMilliSeconds: Long,
             downloadedBytesPerSecond: Long
         ) {
+            Log.d("hhahahah", downloadedBytesPerSecond.toString())
+            val progress = if (download.progress > 0) download.progress else 0
+            _fileDownloadStatusLiveData.value =
+                FileModel(
+                    id = downloadFileIdMap[download.id],
+                    status = FileStatus.DOWNLOADING,
+                    downloadProgress = progress,
+                    downloadedBytesPerSecond = downloadedBytesPerSecond
+                )
 
         }
 
@@ -137,7 +153,12 @@ class FilesListViewModel @Inject constructor(
             totalBlocks: Int
         ) {
             _fileDownloadStatusLiveData.value =
-                FileModel(id = downloadFileIdMap[download.id], status = FileStatus.DOWNLOADING)
+                FileModel(
+                    id = downloadFileIdMap[download.id],
+                    status = FileStatus.DOWNLOADING,
+                    downloadProgress = 0,
+                    downloadedBytesPerSecond = 0
+                )
         }
 
         override fun onWaitingNetwork(download: Download) {}

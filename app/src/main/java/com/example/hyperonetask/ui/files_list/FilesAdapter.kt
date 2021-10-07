@@ -1,5 +1,7 @@
 package com.example.hyperonetask.ui.files_list
 
+import android.annotation.SuppressLint
+import android.text.format.Formatter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,12 +12,13 @@ import com.example.hyperonetask.data.model.FileModel
 import com.example.hyperonetask.data.model.FileStatus
 import com.example.hyperonetask.databinding.ItemFileBinding
 
+@SuppressLint("SetTextI18n")
 class FilesAdapter constructor(
     private val onSelect: (FileModel) -> Unit,
 ) : ListAdapter<FileModel, FilesAdapter.ItemViewHolder>(Differentiator) {
 
     private var unfilteredList: List<FileModel>? = null
-    private val filteredList = mutableListOf<FileModel>()
+    private var filteredList = mutableListOf<FileModel>()
     private var filterText: String = ""
 
     fun submit(list: List<FileModel>) {
@@ -26,6 +29,8 @@ class FilesAdapter constructor(
     fun update(fileModel: FileModel) {
         unfilteredList?.first { model -> fileModel.id == model.id }?.let {
             it.status = fileModel.status
+            it.downloadProgress = fileModel.downloadProgress
+            it.downloadedBytesPerSecond = fileModel.downloadedBytesPerSecond
         }
         val index = filteredList.indexOf(fileModel)
         if (index != -1)
@@ -41,7 +46,7 @@ class FilesAdapter constructor(
         if (unfilteredList == null)
             return
 
-        filteredList.clear()
+        filteredList = mutableListOf()
 
         if (filterText.isNotEmpty()) {
             filteredList.addAll(unfilteredList!!.filter {
@@ -70,7 +75,7 @@ class FilesAdapter constructor(
             tvName.text = model.name
             // File Status Text
             tvStatus.setText(model.status.labelResource)
-            // File Status Icon & Progress Visibility
+            // File Status Icon, Progress, and download speed
             when (model.status) {
                 FileStatus.ONLINE, FileStatus.PENDING, FileStatus.DOWNLOADED -> {
                     ivStatusTypes.visibility = View.VISIBLE
@@ -81,6 +86,9 @@ class FilesAdapter constructor(
                     ivStatusTypes.visibility = View.INVISIBLE
                     gpDownloadingViews.visibility = View.VISIBLE
                     ivStatusDownloading.setImageResource(model.status.iconResource)
+                    tvDownloadPercentage.text = "${model.downloadProgress}%"
+                    val readableBytes = Formatter.formatFileSize(tvDownloadSpeed.context, model.downloadedBytesPerSecond)
+                    tvDownloadSpeed.text = "$readableBytes/s"
                 }
             }
             // Click Listener

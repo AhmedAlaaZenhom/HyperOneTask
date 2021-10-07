@@ -8,7 +8,9 @@ open class FileModel(
     var type: String? = null,
     var url: String? = null,
     var name: String? = null,
-    var status: FileStatus = FileStatus.ONLINE
+    var status: FileStatus = FileStatus.ONLINE,
+    var downloadProgress: Int = 0,
+    var downloadedBytesPerSecond: Long = 0L,
 ) : Serializable{
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
