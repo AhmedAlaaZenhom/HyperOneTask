@@ -1,7 +1,10 @@
 package com.example.hyperonetask.data.di
 
 import com.example.hyperonetask.BuildConfig
+import com.example.hyperonetask.HyperOneTaskApp
 import com.example.hyperonetask.data.remote.files.FilesApiService
+import com.tonyodev.fetch2.Fetch
+import com.tonyodev.fetch2.FetchConfiguration
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,6 +20,15 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
 
+
+    @Singleton
+    @Provides
+    fun getFetchSingleton(): Fetch {
+        val configs: FetchConfiguration = FetchConfiguration.Builder(HyperOneTaskApp.context!!)
+            .setDownloadConcurrentLimit(1)
+            .build()
+        return Fetch.getInstance(configs)
+    }
 
     @Singleton
     @Provides

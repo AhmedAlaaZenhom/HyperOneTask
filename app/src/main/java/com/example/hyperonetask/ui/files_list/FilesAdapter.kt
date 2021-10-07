@@ -6,39 +6,56 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.hyperonetask.R
 import com.example.hyperonetask.data.model.FileModel
 import com.example.hyperonetask.data.model.FileStatus
 import com.example.hyperonetask.databinding.ItemFileBinding
 
 class FilesAdapter constructor(
-    private val onSelect: (FileModel)-> Unit,
-): ListAdapter<FileModel, FilesAdapter.ItemViewHolder>(Differentiator) {
+    private val onSelect: (FileModel) -> Unit,
+) : ListAdapter<FileModel, FilesAdapter.ItemViewHolder>(Differentiator) {
 
-    private var unfilteredList: List<FileModel>? =null
+    private var unfilteredList: List<FileModel>? = null
+    private val filteredList = mutableListOf<FileModel>()
+    private var filterText: String = ""
 
-    fun modifyList(list : List<FileModel>) {
+    fun submit(list: List<FileModel>) {
         unfilteredList = list
-        submitList(list)
+        filter(filterText)
     }
 
-    fun filter(query: CharSequence?) {
-        if(unfilteredList == null)
+    fun update(fileModel: FileModel) {
+        unfilteredList?.first { model -> fileModel.id == model.id }?.let {
+            it.status = fileModel.status
+        }
+        val index = filteredList.indexOf(fileModel)
+        if (index != -1)
+            notifyItemChanged(index)
+    }
+
+    fun filter(filterText: String?) {
+        this.filterText = filterText ?: ""
+        filter()
+    }
+
+    private fun filter() {
+        if (unfilteredList == null)
             return
 
-        val list = mutableListOf<FileModel>()
+        filteredList.clear()
 
-        if(!query.isNullOrEmpty()) {
-            list.addAll(unfilteredList!!.filter {
-                it.name?.lowercase()?.contains(query.toString().lowercase()) == true })
+        if (filterText.isNotEmpty()) {
+            filteredList.addAll(unfilteredList!!.filter {
+                it.name?.lowercase()?.contains(filterText.toString().lowercase()) == true
+            })
         } else {
-            list.addAll(unfilteredList!!)
+            filteredList.addAll(unfilteredList!!)
         }
 
-        submitList(list)
+        submitList(filteredList)
     }
 
-    class ItemViewHolder constructor(val binding: ItemFileBinding): RecyclerView.ViewHolder(binding.root)
+    class ItemViewHolder constructor(val binding: ItemFileBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val binding = ItemFileBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -48,13 +65,13 @@ class FilesAdapter constructor(
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val model = getItem(position)!!
 
-        with(holder.binding){
+        with(holder.binding) {
             // File Name
             tvName.text = model.name
             // File Status Text
             tvStatus.setText(model.status.labelResource)
             // File Status Icon & Progress Visibility
-            when(model.status) {
+            when (model.status) {
                 FileStatus.ONLINE, FileStatus.PENDING, FileStatus.DOWNLOADED -> {
                     ivStatusTypes.visibility = View.VISIBLE
                     ivStatusTypes.setImageResource(model.status.iconResource)

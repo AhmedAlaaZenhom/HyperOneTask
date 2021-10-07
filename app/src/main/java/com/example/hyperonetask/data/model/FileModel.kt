@@ -4,12 +4,28 @@ import com.example.hyperonetask.R
 import java.io.Serializable
 
 open class FileModel(
-): Serializable{
-    var id: Int? = null
-    var type: String? = null
-    var url: String? = null
-    var name: String? = null
+    var id: Int? = null,
+    var type: String? = null,
+    var url: String? = null,
+    var name: String? = null,
     var status: FileStatus = FileStatus.ONLINE
+) : Serializable{
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as FileModel
+        if (id != other.id) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id?.hashCode() ?: 0
+        result = 31 * result + (type?.hashCode() ?: 0)
+        result = 31 * result + (url?.hashCode() ?: 0)
+        result = 31 * result + (name?.hashCode() ?: 0)
+        result = 31 * result + status.hashCode()
+        return result
+    }
 }
 
 enum class FileStatus {
